@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperPong — AI-Powered Table Tennis Umpire</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Instrument Serif"', 'serif'],
+            sans: ['"Instrument Sans"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            cream: '#FEF0E8',
+            dark: '#0F0E0C',
+            darker: '#080706',
+            card: '#1A1815',
+            'card-alt': '#1A1610',
+            sand: '#FAF8F4',
+            'stats-bg': '#161412',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @font-face {
+      font-family: 'lucide';
+      src: url('https://unpkg.com/lucide-static@latest/font/lucide.woff2') format('woff2');
+    }
+    .icon-lucide {
+      font-family: 'lucide';
+      font-style: normal;
+      font-weight: normal;
+      font-size: inherit;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: 'liga';
+    }
+
+    /* Reveal on scroll */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Staggered children */
+    [data-reveal-child] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-reveal-child].revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-dark text-cream font-sans antialiased">
+
+  <!-- ============================================ -->
+  <!-- HERO SECTION -->
+  <!-- ============================================ -->
+  <section class="relative min-h-screen flex flex-col bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(15,15,15,0.05) 0%, rgba(15,15,15,0.25) 50%, rgba(15,14,12,0.85) 85%, rgba(15,14,12,1) 100%), url('Gemini_Generated_Image_zejp0lzejp0lzejp 1.png');">
+
+    <!-- Navigation -->
+    <nav class="flex items-center justify-between px-6 py-7 md:px-14">
+      <span class="font-serif italic text-2xl text-cream">superpong&reg;</span>
+      <div class="hidden md:flex items-center gap-9">
+        <a href="#about" class="text-[15px] text-cream hover:opacity-80 transition">About</a>
+        <a href="#journal" class="text-[15px] text-cream hover:opacity-80 transition">Journal</a>
+        <a href="#retreats" class="text-[15px] text-cream hover:opacity-80 transition">Retreats</a>
+        <a href="#community" class="text-[15px] text-cream hover:opacity-80 transition">Community</a>
+      </div>
+      <a href="#contact" class="text-[15px] text-cream hover:opacity-80 transition hidden md:block">Contact</a>
+      <!-- Mobile menu button -->
+      <button class="md:hidden text-cream" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden px-6 pb-4 flex flex-col gap-3">
+      <a href="#about" class="text-[15px] text-cream">About</a>
+      <a href="#journal" class="text-[15px] text-cream">Journal</a>
+      <a href="#retreats" class="text-[15px] text-cream">Retreats</a>
+      <a href="#community" class="text-[15px] text-cream">Community</a>
+      <a href="#contact" class="text-[15px] text-cream">Contact</a>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="flex-1 flex flex-col items-center justify-center gap-5 px-6 md:px-14 text-center" data-reveal>
+      <h1 class="font-serif italic text-4xl sm:text-5xl md:text-6xl lg:text-[80px] text-white leading-tight" style="text-shadow: 0 4px 40px rgba(15,15,15,0.8);">
+        Your Camera Is Now the Umpire.
+      </h1>
+      <p class="text-white text-base md:text-xl max-w-[600px]">
+        AI-powered table tennis scoring using real-time vision and voice.
+      </p>
+      <p class="text-white text-sm md:text-[15px] max-w-[480px]">
+        No hardware. No referee. No manual scoring.
+      </p>
+
+      <!-- Pills Row -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-2">
+        <span class="inline-flex items-center gap-2 bg-black/30 rounded-full px-4 py-2 text-[13px] text-cream">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Camera Watches
+        </span>
+        <span class="inline-flex items-center gap-2 bg-black/30 rounded-full px-4 py-2 text-[13px] text-cream">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          AI Detects Rally
+        </span>
+        <span class="inline-flex items-center gap-2 bg-black/30 rounded-full px-4 py-2 text-[13px] text-cream">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+          Auto Scores
+        </span>
+        <span class="inline-flex items-center gap-2 bg-black/30 rounded-full px-4 py-2 text-[13px] text-cream">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          Live Commentary
+        </span>
+        <span class="inline-flex items-center gap-2 bg-black/30 rounded-full px-4 py-2 text-[13px] text-cream">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+          Fully Hands-Free
+        </span>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
+        <a href="#" class="bg-cream text-[#1A1A1A] font-semibold text-lg px-12 py-4 rounded-full hover:opacity-90 transition">
+          Try It Now
+        </a>
+        <a href="#" class="text-white font-semibold text-lg px-10 py-[15px] rounded-full bg-black/35 border border-cream/30 hover:bg-black/50 transition">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div class="flex flex-col items-center gap-4 px-6 md:px-14 py-5" data-reveal>
+      <p class="text-cream/70 text-[13px]">Trusted by players worldwide.</p>
+      <p class="text-cream/70 text-[13px] text-center">Built with Gemini 2.5 Flash &middot; Vision Agents SDK &middot; Ultralytics YOLO</p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- WHAT IS SUPERPONG SECTION -->
+  <!-- ============================================ -->
+  <section id="about" class="bg-dark">
+    <!-- Section Header -->
+    <div class="px-6 md:px-[120px] pt-16 md:pt-[100px] pb-10 md:pb-12">
+      <p class="text-cream/50 text-xs font-medium tracking-[3px] mb-6" data-reveal>WHAT IS SUPERPONG?</p>
+      <h2 class="font-serif italic text-3xl sm:text-4xl md:text-[56px] text-cream leading-tight mb-6" data-reveal>
+        Real-Time AI Umpire for Table Tennis
+      </h2>
+      <p class="text-cream/70 text-base md:text-lg leading-relaxed max-w-[650px]" data-reveal>
+        SuperPong is a real-time AI umpire built using computer vision, multimodal AI, and voice interaction. It detects ball movement, determines rally outcomes, updates the scoreboard, and delivers live commentary &mdash; all hands-free, running entirely in your browser.
+      </p>
+    </div>
+
+    <!-- Content Area -->
+    <div class="px-6 md:px-[120px] pb-16 md:pb-[100px]">
+      <!-- Section Image -->
+      <div class="w-full h-[240px] sm:h-[360px] md:h-[480px] rounded-xl overflow-hidden mb-10 md:mb-12" data-reveal>
+        <img src="https://images.unsplash.com/photo-1574340082901-eccc3a3398bb?w=1080&q=80" alt="Table Tennis" class="w-full h-full object-cover" />
+      </div>
+
+      <!-- Key Points -->
+      <div class="flex flex-col gap-5">
+        <!-- Point 1 -->
+        <div class="bg-card rounded-[10px] p-5 md:p-6 flex gap-4" data-reveal-child>
+          <div class="shrink-0 w-10 h-10 bg-cream/[0.06] rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <h3 class="font-serif italic text-lg text-cream">Computer Vision Ball Detection</h3>
+            <p class="text-cream/50 text-sm leading-relaxed">YOLO tracks ball movement at 5fps, detecting rally outcomes and score events in real time.</p>
+          </div>
+        </div>
+        <!-- Point 2 -->
+        <div class="bg-card rounded-[10px] p-5 md:p-6 flex gap-4" data-reveal-child>
+          <div class="shrink-0 w-10 h-10 bg-cream/[0.06] rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <h3 class="font-serif italic text-lg text-cream">Voice-First Interaction</h3>
+            <p class="text-cream/50 text-sm leading-relaxed">Wake word activation, natural language commands, undo support &mdash; all without touching a device.</p>
+          </div>
+        </div>
+        <!-- Point 3 -->
+        <div class="bg-card rounded-[10px] p-5 md:p-6 flex gap-4" data-reveal-child>
+          <div class="shrink-0 w-10 h-10 bg-cream/[0.06] rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <h3 class="font-serif italic text-lg text-cream">Live AI Commentary</h3>
+            <p class="text-cream/50 text-sm leading-relaxed">Gemini delivers energetic real-time voice commentary after every rally. Point for point.</p>
+          </div>
+        </div>
+        <!-- Point 4 -->
+        <div class="bg-card rounded-[10px] p-5 md:p-6 flex gap-4" data-reveal-child>
+          <div class="shrink-0 w-10 h-10 bg-cream/[0.06] rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <h3 class="font-serif italic text-lg text-cream">Auto Scoreboard Updates</h3>
+            <p class="text-cream/50 text-sm leading-relaxed">Score updates in under 1 second. Serve rotation, deuce rules, and best-of sets &mdash; fully ITTF compliant.</p>
+          </div>
+        </div>
+        <!-- Point 5 -->
+        <div class="bg-card rounded-[10px] p-5 md:p-6 flex gap-4" data-reveal-child>
+          <div class="shrink-0 w-10 h-10 bg-cream/[0.06] rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <h3 class="font-serif italic text-lg text-cream">Runs in the Browser</h3>
+            <p class="text-cream/50 text-sm leading-relaxed">No installs. Full WebRTC camera + mic stream. Optional Python backend with YOLO for enhanced accuracy.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="bg-stats-bg flex flex-col sm:flex-row items-center justify-between px-6 md:px-[120px] py-8" data-reveal>
+      <div class="flex flex-col items-center gap-1.5 py-6 flex-1">
+        <span class="font-serif italic text-5xl text-cream">5fps</span>
+        <span class="text-cream/50 text-[13px]">Video Processing</span>
+      </div>
+      <div class="hidden sm:block w-px h-[60px] bg-cream/[0.08]"></div>
+      <div class="flex flex-col items-center gap-1.5 py-6 flex-1">
+        <span class="font-serif italic text-5xl text-cream">&lt;1s</span>
+        <span class="text-cream/50 text-[13px]">Score Update Latency</span>
+      </div>
+      <div class="hidden sm:block w-px h-[60px] bg-cream/[0.08]"></div>
+      <div class="flex flex-col items-center gap-1.5 py-6 flex-1">
+        <span class="font-serif italic text-5xl text-cream">100%</span>
+        <span class="text-cream/50 text-[13px]">Hands-Free Capable</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- HOW IT WORKS SECTION -->
+  <!-- ============================================ -->
+  <section class="bg-sand">
+    <!-- Section Header -->
+    <div class="px-6 md:px-[120px] pt-16 md:pt-20 pb-10 md:pb-12">
+      <p class="text-[#1A1610]/40 text-xs font-semibold tracking-[3px] mb-4" data-reveal>HOW IT WORKS</p>
+      <h2 class="font-serif italic text-3xl sm:text-4xl md:text-[52px] text-[#1A1610] leading-tight mb-4" data-reveal>
+        From Setup to Scoreboard in Seconds
+      </h2>
+      <p class="text-[#1A1610]/60 text-base md:text-lg" data-reveal>
+        Three simple steps. Voice-activated. Fully automatic.
+      </p>
+    </div>
+
+    <!-- Step Cards -->
+    <div class="px-6 md:px-[120px] pb-16 md:pb-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      <!-- Card 1 -->
+      <div class="bg-card-alt rounded-xl p-8 md:p-10 flex flex-col gap-4" data-reveal-child>
+        <span class="font-serif italic text-6xl text-cream/20">01</span>
+        <h3 class="font-serif italic text-2xl text-cream">Setup Match</h3>
+        <p class="text-cream/50 text-[15px] leading-relaxed">Enter player names, choose your format (11, 21, or best-of sets), and hit start.</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="bg-card-alt rounded-xl p-8 md:p-10 flex flex-col gap-4" data-reveal-child>
+        <span class="font-serif italic text-6xl text-cream/20">02</span>
+        <h3 class="font-serif italic text-2xl text-cream">Wake the AI</h3>
+        <p class="text-cream/50 text-[15px] leading-relaxed">Say "SuperPong" to activate. Camera and mic start simultaneously. The AI begins listening.</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="bg-card-alt rounded-xl p-8 md:p-10 flex flex-col gap-4" data-reveal-child>
+        <span class="font-serif italic text-6xl text-cream/20">03</span>
+        <h3 class="font-serif italic text-2xl text-cream">Live Scoring</h3>
+        <p class="text-cream/50 text-[15px] leading-relaxed">YOLO tracks the ball at 5fps. Gemini detects rally loss, updates score, and delivers live commentary.</p>
+      </div>
+    </div>
+
+    <!-- Voice Commands Strip -->
+    <div class="bg-stats-bg flex flex-wrap items-center gap-4 px-6 md:px-[120px] py-6" data-reveal>
+      <span class="bg-cream/[0.06] text-cream text-[13px] px-4 py-2 rounded-full">Point to X</span>
+      <span class="bg-cream/[0.06] text-cream text-[13px] px-4 py-2 rounded-full">Undo last point</span>
+      <span class="bg-cream/[0.06] text-cream text-[13px] px-4 py-2 rounded-full">Pause match</span>
+      <span class="bg-cream/[0.06] text-cream text-[13px] px-4 py-2 rounded-full">What's the score</span>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- CORE FEATURES SECTION -->
+  <!-- ============================================ -->
+  <section class="bg-dark">
+    <!-- Section Header -->
+    <div class="px-6 md:px-[120px] pt-16 md:pt-20 pb-10 md:pb-12">
+      <p class="text-cream/40 text-xs font-semibold tracking-[3px] mb-5" data-reveal>CORE FEATURES</p>
+      <h2 class="font-serif italic text-3xl sm:text-4xl md:text-[52px] text-cream leading-tight" data-reveal>
+        Everything You Need. Nothing You Don't.
+      </h2>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="px-6 md:px-[120px] pb-16 md:pb-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Col 1 -->
+      <div class="flex flex-col gap-6">
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">Voice-First Scoring</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Natural language control with undo and override support. Context-aware &mdash; no button presses ever.</p>
+        </div>
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">YOLO Ball Detection</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Ultralytics YOLO with custom VideoProcessor. Trajectory prediction and auto rally outcome detection.</p>
+        </div>
+      </div>
+      <!-- Col 2 -->
+      <div class="flex flex-col gap-6">
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">Live Gemini Commentary</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Real-time voice output with energetic short commentary after every rally point.</p>
+        </div>
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">Full Match Intelligence</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Serve rotation, deuce rules, best-of sets. Fully ITTF compliant scoring logic.</p>
+        </div>
+      </div>
+      <!-- Col 3 -->
+      <div class="flex flex-col gap-6">
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">Backend Optional Mode</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Full WebRTC + Python backend, or browser-only Gemini fallback. Your call.</p>
+        </div>
+        <div class="bg-card rounded-xl p-7 md:p-8 flex flex-col gap-4" data-reveal-child>
+          <svg class="w-6 h-6 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <h3 class="font-serif italic text-[22px] text-cream">Post-Match Analytics</h3>
+          <p class="text-cream/50 text-sm leading-relaxed">Winner display, point percentage, set breakdown, and full match duration summary.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ARCHITECTURE SECTION -->
+  <!-- ============================================ -->
+  <section class="bg-sand">
+    <!-- Section Header -->
+    <div class="px-6 md:px-[120px] pt-16 md:pt-20 pb-10 md:pb-12">
+      <p class="text-[#1A1610]/40 text-xs font-semibold tracking-[3px] mb-4" data-reveal>UNDER THE HOOD</p>
+      <h2 class="font-serif italic text-3xl sm:text-4xl md:text-[52px] text-[#1A1610] leading-tight mb-4" data-reveal>
+        Built on Serious Technology
+      </h2>
+      <p class="text-[#1A1610]/50 text-base md:text-lg leading-relaxed" data-reveal>
+        A modular architecture that works in the browser or scales with a Python backend.
+      </p>
+    </div>
+
+    <!-- Content Area -->
+    <div class="px-6 md:px-[120px] pb-16 md:pb-20 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+      <!-- Left Column - Cards -->
+      <div class="flex flex-col gap-5">
+        <div class="bg-card-alt rounded-xl p-6 md:p-7 flex flex-col gap-2.5" data-reveal-child>
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <h3 class="font-serif italic text-lg text-cream">Frontend Stack</h3>
+          </div>
+          <p class="text-cream/50 text-[13px] leading-relaxed">React + Vite &middot; Web Speech API wake word &middot; WebRTC camera stream &middot; useAgentConnection hook</p>
+        </div>
+        <div class="bg-card-alt rounded-xl p-6 md:p-7 flex flex-col gap-2.5" data-reveal-child>
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            <h3 class="font-serif italic text-lg text-cream">Backend Mode</h3>
+          </div>
+          <p class="text-cream/50 text-[13px] leading-relaxed">Stream WebRTC transport &middot; Vision Agents backend &middot; Gemini Realtime at 5fps &middot; YOLO BallTrackingProcessor</p>
+        </div>
+        <div class="bg-card-alt rounded-xl p-6 md:p-7 flex flex-col gap-2.5" data-reveal-child>
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+            <h3 class="font-serif italic text-lg text-cream">Fallback Mode</h3>
+          </div>
+          <p class="text-cream/50 text-[13px] leading-relaxed">Direct Gemini Live in browser &middot; Silent SYSTEM STATE UPDATE messages &middot; Keeps score context accurate</p>
+        </div>
+      </div>
+
+      <!-- Right Column - SDK Card -->
+      <div class="bg-card-alt rounded-xl p-8 md:p-9 flex flex-col gap-5" data-reveal>
+        <svg class="w-7 h-7 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <h3 class="font-serif italic text-[28px] text-cream">Vision Agents SDK</h3>
+        <p class="text-cream/50 text-[15px] leading-relaxed">
+          The framework powering SuperPong. Handles WebRTC, Gemini sessions, and custom video processor integration.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">add_point</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">undo_last_point</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">pause_match</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">resume_match</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">end_match</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">override_score</span>
+          <span class="bg-cream/[0.06] text-cream text-xs px-3 py-1.5 rounded-md">set_serving</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- DEMO & GET STARTED SECTION -->
+  <!-- ============================================ -->
+  <section class="bg-dark">
+    <!-- Demo Section -->
+    <div class="px-6 md:px-[120px] pt-16 md:pt-20 pb-10 md:pb-12">
+      <p class="text-cream/40 text-xs font-semibold tracking-[3px] mb-6" data-reveal>SEE IT IN ACTION</p>
+      <h2 class="font-serif italic text-3xl sm:text-4xl md:text-[52px] text-cream leading-tight mb-6" data-reveal>
+        Watch the AI Score a Real Match
+      </h2>
+
+      <!-- Steps Row -->
+      <div class="flex flex-wrap gap-4 mb-10 md:mb-12" data-reveal>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">01</span>
+          <span class="text-cream text-[13px]">Wake Word</span>
+        </div>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">02</span>
+          <span class="text-cream text-[13px]">Rally Detection</span>
+        </div>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">03</span>
+          <span class="text-cream text-[13px]">Score Update</span>
+        </div>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">04</span>
+          <span class="text-cream text-[13px]">Commentary</span>
+        </div>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">05</span>
+          <span class="text-cream text-[13px]">Undo Command</span>
+        </div>
+        <div class="bg-card rounded-lg px-5 py-3 flex flex-col gap-2">
+          <span class="text-cream/25 text-[11px]">06</span>
+          <span class="text-cream text-[13px]">Match Summary</span>
+        </div>
+      </div>
+
+      <!-- Demo Placeholder -->
+      <div class="w-full h-[240px] sm:h-[300px] md:h-[360px] bg-card rounded-2xl flex flex-col items-center justify-center gap-3" data-reveal>
+        <span class="font-serif italic text-2xl md:text-[32px] text-cream/25">Live Demo</span>
+        <span class="text-cream/20 text-sm">Try the live app to see SuperPong in action</span>
+      </div>
+    </div>
+
+    <!-- Get Started Cards -->
+    <div class="px-6 md:px-[120px] pb-16 md:pb-20 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <!-- Card A - Browser Only -->
+      <div class="bg-sand rounded-2xl p-8 md:p-10 flex flex-col gap-5" data-reveal-child>
+        <span class="self-start bg-[#1A1610]/[0.06] text-[#1A1610] text-[11px] px-3 py-1.5 rounded">BROWSER ONLY</span>
+        <h3 class="font-serif italic text-[32px] text-[#1A1610]">Option A</h3>
+        <div class="flex flex-col gap-2">
+          <div class="bg-[#1A1610]/[0.08] rounded-md px-3.5 py-2.5 font-mono text-[13px] text-[#1A1610]">npm install</div>
+          <div class="bg-[#1A1610]/[0.08] rounded-md px-3.5 py-2.5 font-mono text-[13px] text-[#1A1610]">Add Gemini API key</div>
+          <div class="bg-[#1A1610]/[0.08] rounded-md px-3.5 py-2.5 font-mono text-[13px] text-[#1A1610]">npm run dev</div>
+        </div>
+        <a href="#" class="self-start bg-card-alt text-cream font-semibold text-sm px-7 py-3.5 rounded-lg hover:opacity-90 transition">
+          View GitHub
+        </a>
+      </div>
+
+      <!-- Card B - Full Backend -->
+      <div class="bg-card rounded-2xl p-8 md:p-10 flex flex-col gap-5" data-reveal-child>
+        <span class="self-start bg-cream/[0.06] text-cream text-[11px] px-3 py-1.5 rounded">FULL BACKEND</span>
+        <h3 class="font-serif italic text-[32px] text-cream">Option B</h3>
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-cream/[0.03] text-cream/50 text-xs px-3.5 py-2 rounded-md">WebRTC + YOLO</span>
+          <span class="bg-cream/[0.03] text-cream/50 text-xs px-3.5 py-2 rounded-md">Python Backend</span>
+          <span class="bg-cream/[0.03] text-cream/50 text-xs px-3.5 py-2 rounded-md">Enhanced Accuracy</span>
+        </div>
+        <p class="text-cream/50 text-[15px] leading-relaxed">
+          Run the frontend, start the Python Vision Agents backend, and enable WebRTC + YOLO for maximum accuracy.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#" class="bg-cream text-[#1A1610] font-semibold text-sm px-7 py-3.5 rounded-lg hover:opacity-90 transition">
+            Try Live App
+          </a>
+          <a href="#" class="text-cream/50 text-sm px-7 py-3.5 rounded-lg border border-cream/[0.12] hover:border-cream/30 transition">
+            Read Docs
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- FOOTER -->
+  <!-- ============================================ -->
+  <footer class="bg-darker">
+    <!-- Footer Top -->
+    <div class="px-6 md:px-[120px] pt-12 md:pt-16 pb-10 md:pb-12 flex flex-col lg:flex-row gap-12 md:gap-20" data-reveal>
+      <!-- Brand -->
+      <div class="flex flex-col gap-3 lg:w-[280px] shrink-0">
+        <span class="font-serif italic text-[22px] text-cream">superpong&reg;</span>
+        <p class="text-cream/40 text-[13px] leading-relaxed max-w-[220px]">AI-Powered Table Tennis Umpire</p>
+        <p class="text-cream/25 text-xs">Built for Vision Hackathon</p>
+      </div>
+
+      <!-- Links -->
+      <div class="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-8 md:gap-16">
+        <div class="flex flex-col gap-3.5">
+          <h4 class="text-cream text-xs font-semibold tracking-[1px]">Product</h4>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">GitHub</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Documentation</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Try Live App</a>
+        </div>
+        <div class="flex flex-col gap-3.5">
+          <h4 class="text-cream text-xs font-semibold tracking-[1px]">Built With</h4>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Vision Agents SDK</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Gemini 2.5 Flash</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Stream Video</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Ultralytics YOLO</a>
+        </div>
+        <div class="flex flex-col gap-3.5">
+          <h4 class="text-cream text-xs font-semibold tracking-[1px]">Community</h4>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Hackathon</a>
+          <a href="#" class="text-cream/45 text-sm hover:text-cream/70 transition">Vision Agents SDK</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="mx-6 md:mx-[120px] h-px bg-cream/[0.06]"></div>
+
+    <!-- Footer Bottom -->
+    <div class="px-6 md:px-[120px] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-cream/25 text-xs">&copy; 2025 SuperPong. Built for Vision Hackathon.</p>
+      <div class="flex items-center gap-5">
+        <span class="text-cream/25 text-xs">Vision Agents SDK</span>
+        <span class="w-[3px] h-[3px] rounded-full bg-cream/15"></span>
+        <span class="text-cream/25 text-xs">Gemini 2.5 Flash</span>
+        <span class="w-[3px] h-[3px] rounded-full bg-cream/15"></span>
+        <span class="text-cream/25 text-xs">Ultralytics YOLO</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal on scroll with IntersectionObserver
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    // Staggered children observer
+    const childObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Find all siblings with data-reveal-child in same parent
+          const parent = entry.target.parentElement;
+          const children = parent.querySelectorAll('[data-reveal-child]');
+          children.forEach((child, i) => {
+            setTimeout(() => child.classList.add('revealed'), i * 120);
+            childObserver.unobserve(child);
+          });
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+    document.querySelectorAll('[data-reveal-child]').forEach(el => childObserver.observe(el));
+  </script>
+
+</body>
+</html>
